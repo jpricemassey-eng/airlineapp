@@ -111,7 +111,7 @@ export default function BookFlight({ flight, onBooked, onBack }: { flight: any; 
             <div style={{ backgroundColor: "white", borderRadius: "8px", padding: "20px", marginBottom: "16px", textAlign: "center" }}>
                 <h3 style={{ fontSize: "16px", fontWeight: "bold", color: "#0c1d36", marginBottom: "12px" }}>Route Map</h3>
                 <img
-                    src={`http://www.gcmap.com/map?P=${flight.origin.icao}-${flight.destination.icao}&MS=wls&MR=180&MX=640x480&PM=*`}
+                    src={`https://www.gcmap.com/map?P=${flight.origin.icao}-${flight.destination.icao}&MS=wls&MR=180&MX=640x480&PM=*`}
                     alt={`Route from ${flight.origin.name} to ${flight.destination.name}`}
                     style={{ maxWidth: "100%", borderRadius: "8px", display: "block", margin: "0 auto" }}
                 />
