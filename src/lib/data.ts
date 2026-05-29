@@ -5,31 +5,37 @@ export const LOCATIONS: Record<string, Location> = {
         icao: "NZNE",
         name: "Dairy Flats",
         timezone: "Pacific/Auckland",
+        lat: -36.6583, lng: 174.6553
     },
     YSSY: {
         icao: "YSSY",
         name: "Sydney",
         timezone: "Australia/Sydney",
+        lat: -33.9461, lng: 151.1772
     },
     NZRO: {
         icao: "NZRO",
         name: "Rotorua",
         timezone: "Pacific/Auckland",
+        lat: -38.1092, lng: 176.3172
     },
     NZCI: {
         icao: "NZCI",
         name: "Tuuta",
         timezone: "Pacific/Chatham",
+        lat: -36.2414, lng: 175.4719
     },
     NZGB: {
         icao: "NZGB",
         name: "Claris",
         timezone: "Pacific/Auckland",
+        lat: -43.8100, lng: -176.4572
     },
     NZTL: {
         icao: "NZTL",
         name: "Lake Tekapo",
         timezone: "Pacific/Auckland",
+        lat: -44.0003, lng: 170.4447
     }
 }
 

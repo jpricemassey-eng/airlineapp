@@ -2,6 +2,8 @@ export interface Location {
     icao: string;
     name: string;
     timezone: string;
+    lat: number;
+    lng: number;
 }
 
 export interface Route{

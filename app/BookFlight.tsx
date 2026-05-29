@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
+
+const RouteMap = dynamic(() => import("./RouteMap"), { ssr: false });
 
 export default function BookFlight({ flight, onBooked, onBack }: { flight: any; onBooked: () => void; onBack: () => void }) {
     const [name, setName] = useState("");
@@ -110,13 +113,7 @@ export default function BookFlight({ flight, onBooked, onBack }: { flight: any; 
             {/* Route map */}
             <div style={{ backgroundColor: "white", borderRadius: "8px", padding: "20px", marginBottom: "16px" }}>
                 <h3 style={{ fontSize: "16px", fontWeight: "bold", color: "#0c1d36", marginBottom: "12px" }}>Route Map</h3>
-                <iframe
-                    src={`https://greatcirclemap.com/?routes=${flight.origin.icao}-${flight.destination.icao}`}
-                    width="100%"
-                    height="400"
-                    style={{ border: "none", borderRadius: "4px" }}
-                    loading="lazy"
-                />
+                <RouteMap origin={flight.origin} destination={flight.destination} />
             </div>
 
                         {/* passenger form */}
