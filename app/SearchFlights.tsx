@@ -171,7 +171,7 @@ export default function SearchFlights({ onSelectFlight }: {onSelectFlight: (flig
                                     Book
                                 </button>
                             ) : (
-                                <span style={{ color: "#999" }}>Full</span>
+                                <span style={{ color: "#999" }}>Bookings Full</span>
                             )}
                         </div>
                     </div>
