@@ -49,18 +49,39 @@ export default function BookFlight({ flight, onBooked, onBack }: { flight: any; 
 
     if (success) {
         return (
-            <div style={{ backgroundColor: "#cfe9fa", borderRadius: "8px", padding: "32px", textAlign: "center" }}>
-                <h2 style={{ color: "#61a0c9", fontSize: "24px", marginBottom: "8px" }}>Booking Confirmed!</h2>
-                <p style={{ color: "#386c8e", marginBottom: "16px" }}>
-                    {success.passengerName} is booked on flight {success.flightNumber}
-                </p>
-                <p style={{ fontSize: "13px", color: "#666" }}>
-                    Booking reference: {success.bookingId}
-                </p>
-                <button onClick={onBooked}
-                        style={{ marginTop: "20px", backgroundColor: "#132f59", color: "white", border: "none", padding: "10px 24px", borderRadius: "4px", cursor: "pointer" }}>
-                    Back to Search
-                </button>
+            <div style={{ backgroundColor: "#e8f5e9", borderRadius: "8px", padding: "32px" }}>
+                <h2 style={{ color: "#2e7d32", fontSize: "24px", marginBottom: "16px", textAlign: "center" }}>Booking Confirmed!</h2>
+
+                <div style={{ backgroundColor: "white", borderRadius: "8px", padding: "20px", marginBottom: "16px" }}>
+                    <h3 style={{ fontSize: "16px", fontWeight: "bold", color: "#0c1d36", marginBottom: "12px" }}>Booking Invoice</h3>
+                    <div style={{ fontSize: "14px", color: "#333", lineHeight: "1.8" }}>
+                        <p><strong>Booking Reference:</strong> {success.bookingRef}</p>
+                        <p><strong>Passenger:</strong> {success.passengerName}</p>
+                        <p><strong>Flight:</strong> {flight.flightNumber}</p>
+                        <p><strong>Aircraft:</strong> {flight.aircraft.model.aircraftModel}</p>
+                        <p><strong>From:</strong> {flight.origin.name} ({flight.origin.icao})</p>
+                        <p><strong>To:</strong> {flight.destination.name} ({flight.destination.icao})</p>
+                        <p><strong>Departure:</strong> {new Date(flight.departureTime).toLocaleString("en-NZ", {
+                            timeZone: flight.origin.timezone,
+                            weekday: "long", day: "numeric", month: "long", year: "numeric",
+                            hour: "2-digit", minute: "2-digit", hour12: false, timeZoneName: "short",
+                        })}</p>
+                        <p><strong>Arrival:</strong> {new Date(flight.arrivalTime).toLocaleString("en-NZ", {
+                            timeZone: flight.destination.timezone,
+                            weekday: "long", day: "numeric", month: "long", year: "numeric",
+                            hour: "2-digit", minute: "2-digit", hour12: false, timeZoneName: "short",
+                        })}</p>
+                        <p><strong>Duration:</strong> {flight.durationMinutes} minutes</p>
+                        <p style={{ fontSize: "18px", marginTop: "8px" }}><strong>Price:</strong> ${flight.price} NZD</p>
+                    </div>
+                </div>
+
+                <div style={{ textAlign: "center" }}>
+                    <button onClick={onBooked}
+                            style={{ backgroundColor: "#0c1d36", color: "white", border: "none", padding: "10px 24px", borderRadius: "4px", cursor: "pointer" }}>
+                        Back to Search
+                    </button>
+                </div>
             </div>
         );
     }

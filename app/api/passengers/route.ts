@@ -4,28 +4,45 @@ import { connectToDatabase} from "@/src/lib/mongodb";
 export async function GET(request: NextRequest) {
     const {searchParams} = new URL(request.url);
     const email = searchParams.get("email");
+    const ref = searchParams.get("ref");
 
-    if (!email) {
+    if (!email && !ref) {
         return NextResponse.json
         (
-            {error: "email or password is required"},
+            { error: "email or ref is required" },
             {status: 400}
         );
     }
 
     try {
         const {db} = await connectToDatabase();
-        const normalizedEmail = email.trim().toLowerCase();
 
-        const flights = await db.collection("flights").find({"bookings.passengerEmail": normalizedEmail}).sort({departureTime: 1}).toArray();
+        let query: any;
+        if (ref) {
+            query = { "bookings.bookingRef": ref.toUpperCase()};
+        } else {
+            query = { "bookings.passengerEmail": email!.trim().toLowerCase() };
+        }
+
+        const flights = await db
+            .collection("flights")
+            .find(query)
+            .sort({ departureTime: 1 })
+            .toArray() as any[];
 
         const results = flights.map((f) => {
-            const booking = f.bookings.find(
-                (b: any) => b.passengerEmail === normalizedEmail
+            const booking = f.bookings.find((b: any) =>
+                ref
+                    ? b.bookingRef === ref.toUpperCase()
+                    : b.passengerEmail === email!.trim().toLowerCase()
             );
+
+            if (!booking) return null;
+
             return {
                 scheduleId: f._id.toString(),
                 bookingId: booking?._id?.toString(),
+                bookingRef: booking?.bookingRef,
                 flightNumber: f.flightNumber,
                 aircraftType: f.aircraft.model.aircraftModel,
                 origin: f.origin,
@@ -37,7 +54,7 @@ export async function GET(request: NextRequest) {
                 passengerName: booking?.passengerName,
                 bookedAt: booking?.bookedAt,
             };
-        });
+        }).filter((r) => r !== null);
 
         return NextResponse.json(results);
 

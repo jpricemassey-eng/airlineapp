@@ -7,6 +7,8 @@ export async function POST(request: NextRequest)
     const body = await request.json();
     const { scheduleId, passengerName, passengerEmail } = body;
 
+
+
     if (!scheduleId || !passengerName || !passengerEmail)
     {
         return NextResponse.json(
@@ -17,6 +19,9 @@ export async function POST(request: NextRequest)
 
     try {
         const { db } = await connectToDatabase();
+        const allFlights = await db.collection("flights").find({}).toArray();
+        const totalBookings = allFlights.reduce((sum, f) => sum + (f.bookings?.length || 0), 0);
+        const bookingRef = "DF" + String(totalBookings + 1).padStart(6, "0");
 
         const flight = await db
             .collection("flights")
@@ -45,6 +50,7 @@ export async function POST(request: NextRequest)
         const bookingId = new ObjectId();
         const booking = {
             _id: bookingId,
+            bookingRef: bookingRef,
             passengerName: passengerName.trim(),
             passengerEmail: passengerEmail.trim().toLowerCase(),
             bookedAt: new Date(),
@@ -57,6 +63,7 @@ export async function POST(request: NextRequest)
 
         return NextResponse.json({
             bookingId: bookingId.toString(),
+            bookingRef: bookingRef,
             flightNumber: flight.flightNumber,
             passengerName: passengerName.trim(),
             passengerEmail: passengerEmail.trim().toLowerCase(),
@@ -65,6 +72,8 @@ export async function POST(request: NextRequest)
             destination: flight.destination,
         });
     }
+
+
     catch (error) {
         console.error("Booking error:", error);
         return NextResponse.json({error: "Failed to create booking"}, {status: 500});

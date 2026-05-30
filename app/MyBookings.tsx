@@ -10,14 +10,21 @@ export default function MyBookings()
     const [searched, setSearched] = useState(false);
     const [cancellingId, setCancellingId] = useState<string | null>(null);
 
+    const [searchMode, setSearchMode] = useState<"email" | "ref">("email");
+    const [bookingRef, setBookingRef] = useState("");
+
     async function handleLookup()
     {
-        if (!email) return;
+        if (searchMode === "email" && !email) return;
+        if (searchMode === "ref" && !bookingRef) return;
         setLoading(true);
         setSearched(true);
 
         try {
-            const res = await fetch(`/api/passengers?email=${encodeURIComponent(email)}`);
+            const param = searchMode === "email"
+                ? `email=${encodeURIComponent(email)}`
+                : `ref=${encodeURIComponent(bookingRef)}`;
+            const res = await fetch(`/api/passengers?${param}`);
             const data = await res.json();
             setBookings(Array.isArray(data) ? data : []);
         } catch {
@@ -51,18 +58,45 @@ export default function MyBookings()
 
     return (
         <div>
-            {/* Email lookup */}
-            <div style={{ backgroundColor: "white", borderRadius: "8px", padding: "20px", marginBottom: "24px", display: "flex", gap: "12px", alignItems: "flex-end" }}>
-                <div style={{ flex: 1 }}>
-                    <label style={{ display: "block", fontSize: "14px", color: "#666", marginBottom: "4px" }}>Email Address</label>
-                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                           placeholder="Enter an email for the booking"
-                           style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }} />
+            {/* Booking lookup */}
+            <div style={{ backgroundColor: "white", borderRadius: "8px", padding: "20px", marginBottom: "24px" }}>
+                <div style={{ display: "flex", gap: "8px", marginBottom: "12px" }}>
+                    <button onClick={() => setSearchMode("email")}
+                            style={{ padding: "6px 16px", borderRadius: "4px", border: "1px solid #ccc", cursor: "pointer",
+                                backgroundColor: searchMode === "email" ? "#0c1d36" : "white",
+                                color: searchMode === "email" ? "white" : "#333" }}>
+                        Search by Email
+                    </button>
+                    <button onClick={() => setSearchMode("ref")}
+                            style={{ padding: "6px 16px", borderRadius: "4px", border: "1px solid #ccc", cursor: "pointer",
+                                backgroundColor: searchMode === "ref" ? "#0c1d36" : "white",
+                                color: searchMode === "ref" ? "white" : "#333" }}>
+                        Search by Reference
+                    </button>
                 </div>
-                <button onClick={handleLookup} disabled={loading}
-                        style={{ backgroundColor: "#0c1d36", color: "white", padding: "10px 24px", border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: "bold" }}>
-                    {loading ? "~Loading~" : "Look Up"}
-                </button>
+                <div style={{ display: "flex", gap: "12px", alignItems: "flex-end" }}>
+                    <div style={{ flex: 1 }}>
+                        {searchMode === "email" ? (
+                            <>
+                                <label style={{ display: "block", fontSize: "14px", color: "#666", marginBottom: "4px" }}>Email Address</label>
+                                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+                                       placeholder="Enter your booking email"
+                                       style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }} />
+                            </>
+                        ) : (
+                            <>
+                                <label style={{ display: "block", fontSize: "14px", color: "#666", marginBottom: "4px" }}>Booking Reference</label>
+                                <input type="text" value={bookingRef} onChange={(e) => setBookingRef(e.target.value)}
+                                       placeholder="e.g. DF000001"
+                                       style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }} />
+                            </>
+                        )}
+                    </div>
+                    <button onClick={handleLookup} disabled={loading}
+                            style={{ backgroundColor: "#0c1d36", color: "white", padding: "10px 24px", border: "none", borderRadius: "4px", cursor: "pointer", fontWeight: "bold" }}>
+                        {loading ? "Looking up..." : "Look Up"}
+                    </button>
+                </div>
             </div>
 
             {/* Results */}
@@ -89,7 +123,7 @@ export default function MyBookings()
                             })} · {b.durationMinutes} min
                         </div>
                         <div style={{ fontSize: "13px", color: "#666" }}>
-                            Passenger: {b.passengerName}
+                            Ref: {b.bookingRef} · Passenger: {b.passengerName}
                         </div>
                     </div>
                     <div style={{ textAlign: "right" }}>
